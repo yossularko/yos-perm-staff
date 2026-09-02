@@ -1,0 +1,31 @@
+# dependencies & build output (dibangun ulang di dalam image)
+node_modules
+.next
+out
+build
+coverage
+
+# git & tooling
+.git
+.gitignore
+.github
+.vscode
+.idea
+.claude
+
+# docker
+Dockerfile
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# env & secrets — jangan pernah ikut ke dalam image
+.env
+.env.*
+*.pem
+
+# misc
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*

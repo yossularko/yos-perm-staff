@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Menghasilkan .next/standalone berisi server.js + node_modules seperlunya,
+  // dipakai oleh runtime stage di Dockerfile.
+  output: "standalone",
 };
 
 export default nextConfig;
