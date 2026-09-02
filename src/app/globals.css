@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-navy-950: #050b18;
+  --color-navy-900: #0a1628;
+  --color-navy-800: #10203a;
+  --color-navy-700: #17304f;
+  --color-navy-600: #22456d;
+  --color-gold-200: #fef3c7;
+  --color-gold-300: #fde047;
+  --color-gold-400: #facc15;
+  --color-gold-500: #eab308;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+  /* proximity sebagai default agar slide yang lebih tinggi dari layar kecil
+     tetap bisa di-scroll bebas; mandatory hanya saat layar cukup tinggi. */
+  scroll-snap-type: y proximity;
+  background-color: var(--color-navy-950);
+}
+
+@media (min-height: 680px) {
+  html {
+    scroll-snap-type: y mandatory;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-navy-950);
+  background-image:
+    radial-gradient(60rem 40rem at 10% -12%, rgba(37, 99, 235, 0.2), transparent 62%),
+    radial-gradient(45rem 32rem at 98% 6%, rgba(234, 179, 8, 0.12), transparent 60%),
+    radial-gradient(55rem 45rem at 50% 118%, rgba(34, 69, 109, 0.4), transparent 62%);
+  background-attachment: fixed;
+}
+
+/* Fade-in per slide. Hanya aktif setelah deck di-mount di client
+   (data-deck-ready), supaya konten tetap terlihat kalau JS gagal jalan. */
+[data-deck-ready="true"] .slide-reveal > * {
+  opacity: 0;
+  transform: translateY(1.75rem);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-deck-ready="true"] [data-visible="true"] .slide-reveal > * {
+  opacity: 1;
+  transform: none;
+}
+
+.slide-reveal > *:nth-child(2) {
+  transition-delay: 0.1s;
+}
+.slide-reveal > *:nth-child(3) {
+  transition-delay: 0.2s;
+}
+.slide-reveal > *:nth-child(4) {
+  transition-delay: 0.3s;
+}
+.slide-reveal > *:nth-child(n + 5) {
+  transition-delay: 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-deck-ready="true"] .slide-reveal > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
