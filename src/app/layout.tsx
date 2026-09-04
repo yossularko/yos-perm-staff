@@ -13,9 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pengajuan Status Karyawan Tetap — Muhammad Yos Sularko",
+  title:
+    "Uji Kompetensi ICT Developer Staff — Muhammad Yos Sularko",
   description:
-    "Presentasi pengajuan status karyawan tetap: rekam jejak, kontribusi, dan kompetensi Muhammad Yos Sularko di PT Adyawinsa Telecommunication and Electrical.",
+    "Materi presentasi Uji Kompetensi ICT Developer Staff: pengembangan Odoo Community 17 dan ekosistem aplikasi internal oleh Tim ICT PT Adyawinsa Telecommunication and Electrical.",
 };
 
 export const viewport: Viewport = {

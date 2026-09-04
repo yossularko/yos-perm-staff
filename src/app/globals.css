@@ -19,16 +19,12 @@
 
 html {
   scroll-behavior: smooth;
-  /* proximity sebagai default agar slide yang lebih tinggi dari layar kecil
-     tetap bisa di-scroll bebas; mandatory hanya saat layar cukup tinggi. */
+  /* proximity, bukan mandatory: slide section panduan (requirement, arsitektur,
+     troubleshooting) bisa lebih tinggi dari viewport laptop, dan mandatory akan
+     menahan scroll di tengah slide. Navigasi tombol tetap mendarat presisi
+     karena memakai scrollIntoView. */
   scroll-snap-type: y proximity;
   background-color: var(--color-navy-950);
-}
-
-@media (min-height: 680px) {
-  html {
-    scroll-snap-type: y mandatory;
-  }
 }
 
 body {
