@@ -382,6 +382,79 @@ function Impact({ items }: { items: { label: string; text: string }[] }) {
   );
 }
 
+function Groups({
+  items,
+}: {
+  items: { category: string; items: string[] }[];
+}) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((group, index) => (
+        <div
+          key={index}
+          className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+        >
+          <h4 className="font-mono text-xs uppercase tracking-[0.18em] text-gold-400">
+            {group.category}
+          </h4>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {group.items.map((item, itemIndex) => (
+              <li
+                key={itemIndex}
+                className="rounded-full border border-white/12 bg-navy-800/60 px-3.5 py-1.5 text-sm font-medium text-slate-100 lg:text-base"
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const statusStyles: Record<"active" | "done" | "queued", string> = {
+  active: "border-gold-400/50 bg-gold-400/15 text-gold-300",
+  done: "border-emerald-400/40 bg-emerald-400/10 text-emerald-300",
+  queued: "border-white/15 bg-white/5 text-slate-400",
+};
+
+function Roadmap({
+  items,
+}: {
+  items: {
+    title: string;
+    status: string;
+    tone: "active" | "done" | "queued";
+    detail: string;
+  }[];
+}) {
+  return (
+    <ul className="grid gap-3">
+      {items.map((item, index) => (
+        <li
+          key={index}
+          className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6"
+        >
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <h4 className="text-xl font-semibold text-white lg:text-2xl">
+              {item.title}
+            </h4>
+            <span
+              className={`rounded-full border px-3 py-1 font-mono text-xs uppercase tracking-[0.12em] ${statusStyles[item.tone]}`}
+            >
+              {item.status}
+            </span>
+          </div>
+          <p className="mt-2 text-base leading-relaxed text-slate-300 lg:text-lg">
+            <Marked>{item.detail}</Marked>
+          </p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function Callout({ title, items }: { title: string; items: string[] }) {
   return (
     <div className="rounded-2xl border border-gold-400/30 bg-gold-400/[0.07] p-6 sm:p-7">
@@ -455,6 +528,20 @@ function BlockView({ block }: { block: Block }) {
         <div>
           {block.heading ? <BlockHeading>{block.heading}</BlockHeading> : null}
           <Impact items={block.items} />
+        </div>
+      );
+    case "groups":
+      return (
+        <div>
+          {block.heading ? <BlockHeading>{block.heading}</BlockHeading> : null}
+          <Groups items={block.items} />
+        </div>
+      );
+    case "roadmap":
+      return (
+        <div>
+          {block.heading ? <BlockHeading>{block.heading}</BlockHeading> : null}
+          <Roadmap items={block.items} />
         </div>
       );
   }
@@ -590,6 +677,12 @@ export default function Slide({ slide, index, total }: SlideProps) {
       <h2 className="mt-4 text-3xl font-bold leading-[1.12] tracking-tight text-white sm:text-4xl lg:text-5xl">
         {slide.title}
       </h2>
+
+      {slide.subtitle ? (
+        <p className="mt-4 max-w-4xl text-base leading-relaxed text-slate-400 lg:text-lg">
+          {slide.subtitle}
+        </p>
+      ) : null}
 
       <div className="mt-5 h-1 w-16 rounded-full bg-gold-400" />
 

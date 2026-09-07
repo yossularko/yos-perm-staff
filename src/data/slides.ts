@@ -1,20 +1,26 @@
 /**
  * Konten presentasi Uji Kompetensi ICT Developer Staff.
  *
- * Urutan slide mengikuti "A. Struktur Materi Presentasi" pada panduan HR:
- * Project Overview → Requirement Analysis → System/Application Design →
- * Software Development → Testing & QA → Future Development.
+ * ARAH DECK — dirombak setelah review Direktur Operasional:
+ * Audiens adalah Head HRD, Direktur Operasional, dan Direktur Utama. Dua
+ * direktur lebih peduli pada hasil dan keahlian, bukan proses. Karena itu deck
+ * dipimpin oleh pencapaian dan dampak, bukan oleh urutan section panduan HR.
+ * Materi proses dipadatkan jadi satu slide (slide 6) agar checklist HR tetap
+ * tersentuh tanpa memakan waktu para direktur.
+ *
+ * Empat hal yang wajib sampai ke pendengar:
+ *   1. Potensi & keahlian          -> slide 5
+ *   2. Project yang telah selesai  -> slide 3
+ *   3. Manfaat bagi perusahaan     -> slide 4
+ *   4. Rencana ke depan            -> slide 7
  *
  * PENTING — batas kepemilikan pekerjaan:
  * Odoo Enterprise 17 dibangun oleh vendor Garudea, termasuk peralihan dari
  * sistem lama (E-Project, Adyawinsa Web App). Tim ICT ATE membangun Odoo
- * Community 17 sebagai wadah modul pelengkap, layer integrasinya, dan aplikasi
- * pendukung. Jangan menulis kalimat yang menyiratkan tim ICT melakukan migrasi
- * ke Odoo Enterprise.
- *
- * Konvensi penulisan: teks di dalam «guillemet» adalah angka/fakta draft yang
- * masih perlu diverifikasi sebelum submit, dan dirender dengan garis putus-putus.
- * Daftar lengkapnya ada di runbook-presentasi-uji-kompetensi.md.
+ * Community 17, layer integrasinya, dan aplikasi pendukung. Jangan menulis
+ * kalimat yang menyiratkan tim ICT melakukan migrasi ke Odoo Enterprise.
+ * Material Control Asset External TIDAK dikerjakan sendiri — sebut sebagai
+ * antrean tim, jangan diklaim.
  */
 
 export type SlideVariant = "cover" | "content" | "closing";
@@ -30,7 +36,7 @@ export type Point = {
 export type Tone = "before" | "after" | "core" | "satellite" | "external";
 
 export type Block =
-  /** Daftar label–value, dipakai untuk Project Profile. */
+  /** Daftar label–value, dipakai untuk profil ringkas. */
   | { kind: "profile"; rows: { label: string; value: string }[] }
   /** Poin bullet rapi; `emphasized` untuk poin kunci. */
   | { kind: "points"; heading?: string; items: Point[]; emphasized?: boolean }
@@ -42,16 +48,16 @@ export type Block =
     }
   /** Dua kolom pembanding, mis. pembagian peran sistem. */
   | { kind: "compare"; columns: { title: string; tone: Tone; items: string[] }[] }
-  /** Dua kolom daftar sejajar, mis. functional vs non-functional. */
+  /** Dua kolom daftar sejajar. */
   | { kind: "columns"; columns: { title: string; items: string[] }[] }
-  /** Tabel ringkas untuk prioritization. */
+  /** Tabel ringkas. */
   | {
       kind: "table";
       heading?: string;
       headers: string[];
       rows: { cells: string[]; tone?: "drop" | "keep" }[];
     }
-  /** Tahapan bernomor untuk development / troubleshooting process. */
+  /** Tahapan bernomor untuk proses kerja. */
   | {
       kind: "steps";
       heading?: string;
@@ -64,13 +70,30 @@ export type Block =
       kind: "arch";
       layers: { label: string; caption?: string; tone: Tone; items: string[] }[];
     }
-  /** Kotak sorot untuk keputusan teknis penting. */
+  /** Kotak sorot untuk poin penting. */
   | { kind: "callout"; title: string; items: string[] }
   /** Baris ringkas label + dampak, lebih padat dari kartu points. */
   | {
       kind: "impact";
       heading?: string;
       items: { label: string; text: string }[];
+    }
+  /** Kelompok chip — dipakai untuk portofolio modul/aplikasi dan stack. */
+  | {
+      kind: "groups";
+      heading?: string;
+      items: { category: string; items: string[] }[];
+    }
+  /** Daftar project dengan pill status di sampingnya. */
+  | {
+      kind: "roadmap";
+      heading?: string;
+      items: {
+        title: string;
+        status: string;
+        tone: "active" | "done" | "queued";
+        detail: string;
+      }[];
     };
 
 export type Presenter = { name: string; role: string; meta: string[] };
@@ -78,9 +101,10 @@ export type Presenter = { name: string; role: string; meta: string[] };
 export type Slide = {
   id: string;
   variant: SlideVariant;
-  /** Label section sesuai panduan HR, tampil kecil di atas judul. */
+  /** Label section kecil di atas judul. */
   eyebrow?: string;
   title: string;
+  /** Kalimat pengantar di bawah judul. */
   subtitle?: string;
   /** Kalimat pendukung untuk cover & closing. */
   content?: string;
@@ -93,12 +117,12 @@ export const slides: Slide[] = [
     id: "slide-1",
     variant: "cover",
     eyebrow: "Uji Kompetensi ICT Developer Staff",
-    title: "Pengembangan Odoo Community & Ekosistem Aplikasi Internal",
+    title: "Pencapaian, Dampak, dan Rencana ke Depan",
     subtitle:
-      "Melengkapi cakupan Odoo Enterprise secara mandiri — terintegrasi lewat Odoo RPC dan service Golang",
+      "Pengembangan sistem internal yang kini dipakai ±1.000 karyawan PT Adyawinsa Telecommunication and Electrical",
     presenter: {
       name: "Muhammad Yos Sularko",
-      role: "IT System Development — Tim ICT, PT Adyawinsa Telecommunication and Electrical",
+      role: "IT System Development — Tim ICT",
       meta: [
         "6+ tahun di perusahaan",
         "IT Support 2020",
@@ -111,54 +135,35 @@ export const slides: Slide[] = [
   {
     id: "slide-2",
     variant: "content",
-    eyebrow: "1 — Project Overview",
-    title: "Profil & Tujuan Project",
+    eyebrow: "Latar Belakang",
+    title: "Masalah Bisnis yang Diselesaikan",
+    subtitle:
+      "Sistem internal utama perusahaan, Odoo Enterprise 17, dibangun oleh vendor Garudea. Berikut kebutuhan yang belum tercakup, dan ditangani sendiri oleh Tim ICT.",
     blocks: [
       {
-        kind: "profile",
-        rows: [
+        kind: "points",
+        items: [
           {
-            label: "Nama Project",
-            value:
-              "Pengembangan Odoo Community 17 & aplikasi pendukung Tim ICT ATE",
+            lead: "Cakupan vendor terbatas",
+            text: "Sebagian kebutuhan operasional divisi berada di luar scope yang dibangun vendor",
           },
           {
-            label: "Konteks",
-            value:
-              "Sistem internal utama perusahaan adalah Odoo Enterprise 17, dibangun oleh vendor Garudea",
+            lead: "Setiap perubahan berbiaya",
+            text: "Penambahan modul atau template di Odoo Enterprise memerlukan change request berbayar",
           },
           {
-            label: "User / Business Unit",
-            value:
-              "Finance, GA, Asset Management, HR, Recruitment, Training, tim proyek (PM/Waspang/Material Control), ICT, serta mitra eksternal",
-          },
-          {
-            label: "Periode",
-            value: "2025 – sekarang",
-          },
-          {
-            label: "Peran Saya",
-            value:
-              "IT System Development — lingkup fullstack: analisis kebutuhan, frontend, backend, database, integrasi, deployment, maintenance",
+            lead: "Ide internal sulit terwadahi",
+            text: "Kebutuhan baru dari divisi perlu jalur pengembangan yang bisa dijalankan sendiri",
           },
         ],
       },
       {
-        kind: "points",
-        heading: "Project Objective — masalah bisnis yang diselesaikan",
+        kind: "callout",
+        title: "Jalan keluar yang diambil Tim ICT",
         items: [
-          {
-            lead: "Cakupan Enterprise terbatas",
-            text: "Sebagian kebutuhan operasional divisi belum tercakup dalam scope yang dibangun vendor",
-          },
-          {
-            lead: "Setiap perubahan berbiaya",
-            text: "Penambahan modul atau template di Odoo Enterprise memerlukan change request berbayar ke vendor",
-          },
-          {
-            lead: "Ide internal sulit terwadahi",
-            text: "Kebutuhan dan ide modul baru dari divisi perlu jalur pengembangan yang bisa dijalankan sendiri",
-          },
+          "Membangun Odoo Community 17 sebagai wadah modul pelengkap — versi sama agar tetap kompatibel",
+          "Terintegrasi dengan Enterprise lewat Odoo RPC dan service Golang, tanpa mengubah alur intinya",
+          "Kebutuhan baru sejak itu bisa dikerjakan internal, tanpa menunggu dan tanpa biaya vendor",
         ],
       },
     ],
@@ -167,42 +172,63 @@ export const slides: Slide[] = [
   {
     id: "slide-3",
     variant: "content",
-    eyebrow: "1 — Project Overview",
-    title: "Pembagian Peran Sistem & Alur Proses",
+    eyebrow: "Pencapaian",
+    title: "Sistem yang Telah Dibangun",
+    subtitle:
+      "15 modul Odoo Community dan 9 aplikasi pendukung, aktif dipakai lintas divisi.",
     blocks: [
       {
-        kind: "compare",
-        columns: [
+        kind: "groups",
+        heading: "15 Modul Odoo Community",
+        items: [
           {
-            title: "Odoo Enterprise 17 — vendor Garudea",
-            tone: "before",
+            category: "Finance & Pembayaran",
             items: [
-              "Sistem internal utama perusahaan",
-              "Menggantikan sistem lama E-Project & Adyawinsa Web App",
-              "Sumber data transaksi inti (PO, Bill, master data)",
-              "Perubahan di luar scope memerlukan CR berbayar",
+              "Cash Advance",
+              "Cash Advance Settlement",
+              "Reimbursement",
+              "Vendor Bills",
+              "ESPP",
             ],
           },
           {
-            title: "Odoo Community 17 — Tim ICT ATE",
-            tone: "after",
+            category: "Proyek & Anggaran",
+            items: ["ERAB", "Project & Material Control", "Dashboard"],
+          },
+          {
+            category: "SDM",
             items: [
-              "Wadah modul yang belum tercakup dan ide modul baru",
-              "Versi sama (17) agar kompatibel dengan Enterprise",
-              "Tidak mengubah alur inti Enterprise, hanya membaca & menulis terkontrol",
-              "Dikembangkan dan dirawat sepenuhnya oleh tim internal",
+              "Manpower Request",
+              "Recruitment",
+              "Training",
+              "Exit Clearances",
             ],
+          },
+          { category: "Aset & Umum", items: ["Asset Management"] },
+          {
+            category: "ICT & Integrasi",
+            items: ["ICT Helpdesk", "Sync Data System"],
           },
         ],
       },
       {
-        kind: "flow",
-        heading: "Contoh alur end-to-end — penerbitan SPP (modul ESPP)",
-        steps: [
-          { label: "PO terbit", caption: "Odoo Enterprise" },
-          { label: "Validasi item ke Bill", caption: "via Odoo RPC" },
-          { label: "SPP dibuat", caption: "Odoo Community" },
-          { label: "Mitra pantau status", caption: "AdyaMitra" },
+        kind: "groups",
+        heading: "9 Aplikasi Pendukung",
+        items: [
+          { category: "Lapangan & Mobile", items: ["AdyaPro"] },
+          { category: "Mitra & Pelaporan", items: ["AdyaMitra", "AdyaReport"] },
+          {
+            category: "Layanan Internal",
+            items: ["Adyaworx", "Hallo ATE", "Helpdesk MS Surabaya"],
+          },
+          {
+            category: "Rekrutmen & Publik",
+            items: [
+              "ATE Career",
+              "Adyawinsa Company Profile",
+              "ATE Company Profile",
+            ],
+          },
         ],
       },
     ],
@@ -211,78 +237,36 @@ export const slides: Slide[] = [
   {
     id: "slide-4",
     variant: "content",
-    eyebrow: "2 — Requirement Analysis",
-    title: "Requirement & Prioritisasi",
+    eyebrow: "Dampak",
+    title: "Manfaat bagi Perusahaan",
     blocks: [
       {
-        kind: "columns",
-        columns: [
-          {
-            title: "Functional Requirement",
-            items: [
-              "Modul operasional yang belum tercakup Enterprise: Cash Advance, Settlement, Reimbursement, Asset Management",
-              "Modul proyek & anggaran: ESPP, ERAB, Project & Material Control",
-              "Modul SDM: Manpower Request, Recruitment, Training, Exit Clearances",
-              "Sinkronisasi data dari Enterprise ke Community",
-              "Akses mitra eksternal untuk memantau status SPP",
-            ],
-          },
-          {
-            title: "Non-Functional Requirement",
-            items: [
-              "Integritas: tidak mengganggu alur dan data transaksi di Enterprise",
-              "Keamanan: role-based access, data mitra terisolasi dari data internal",
-              "Kompatibilitas: mengikuti versi Odoo 17 agar integrasi tetap aman",
-              "Maintainability: memanfaatkan fitur standar Odoo, kustomisasi seperlunya",
-              "Ketersediaan: deployment Docker dan backup terjadwal",
-            ],
-          },
+        kind: "stats",
+        items: [
+          { value: "±1.000", label: "Karyawan terlayani sistem" },
+          { value: "±100", label: "Tim lapangan memakai harian" },
+          { value: "±50", label: "Admin aktif harian" },
+          { value: "±30", label: "Tiket ICT ditangani per bulan" },
         ],
       },
       {
-        kind: "table",
-        heading:
-          "Prioritization — urgency, business impact, complexity, feasibility",
-        headers: ["Kebutuhan", "Urgency", "Impact", "Effort", "Keputusan"],
-        rows: [
+        kind: "impact",
+        items: [
           {
-            cells: [
-              "Sinkronisasi data Enterprise → Community",
-              "Tinggi",
-              "Tinggi",
-              "Tinggi",
-              "P1 — fondasi semua modul",
-            ],
-            tone: "keep",
+            label: "Produktivitas",
+            text: "Pembuatan dan approval RAB yang dulu berhari-hari kini bisa selesai dalam satu hari",
           },
           {
-            cells: [
-              "Modul operasional & proyek (CA, ESPP, ERAB, dll.)",
-              "Tinggi",
-              "Tinggi",
-              "Sedang",
-              "P1 — bertahap per modul",
-            ],
-            tone: "keep",
+            label: "Efisiensi biaya",
+            text: "Kebutuhan baru dikerjakan internal, tanpa change request berbayar ke vendor",
           },
           {
-            cells: [
-              "Aplikasi pendukung (AdyaPro, AdyaMitra, AdyaReport)",
-              "Sedang",
-              "Sedang",
-              "Sedang",
-              "P2 — menyusul",
-            ],
+            label: "Kecepatan delivery",
+            text: "Modul kecil selesai 1–4 minggu, project penuh 1–2 bulan",
           },
           {
-            cells: [
-              "Ajukan CR ke vendor untuk tiap modul baru",
-              "—",
-              "Sedang",
-              "Biaya tinggi",
-              "Dihindari — dialihkan ke Community",
-            ],
-            tone: "drop",
+            label: "Kepercayaan",
+            text: "Pengembangan HRIS dialihkan dari vendor untuk digarap tim internal",
           },
         ],
       },
@@ -292,76 +276,36 @@ export const slides: Slide[] = [
   {
     id: "slide-5",
     variant: "content",
-    eyebrow: "3 — System / Application Design",
-    title: "Technical Approach & Keputusan Arsitektur",
+    eyebrow: "Kapasitas",
+    title: "Keahlian yang Dikuasai",
     blocks: [
       {
-        kind: "callout",
-        title: "Kenapa modul dibangun di Odoo Community, bukan CR ke vendor?",
+        kind: "groups",
         items: [
-          "Setiap penambahan modul atau template di Odoo Enterprise memerlukan change request berbayar — biaya menumpuk dan kebutuhan harus mengantre",
-          "Odoo Community 17 dipakai sebagai wadah modul pelengkap, dengan versi yang sama agar tetap kompatibel",
-          "Enterprise tetap menjadi sumber kebenaran data transaksi; Community tidak mengubah alur intinya",
-          "Hasilnya: kebutuhan baru dari divisi bisa dikerjakan sendiri, tanpa biaya CR dan tanpa menunggu vendor",
+          {
+            category: "Frontend",
+            items: ["React", "Next.js", "React Native", "TypeScript"],
+          },
+          { category: "Backend", items: ["Golang", "Python (Odoo)", "NestJS"] },
+          { category: "Database", items: ["PostgreSQL", "MySQL", "Redis"] },
+          {
+            category: "Integrasi",
+            items: ["Odoo RPC", "REST API", "Integrasi pihak ketiga"],
+          },
+          { category: "Infrastruktur", items: ["Docker", "Deployment"] },
         ],
       },
       {
-        kind: "arch",
-        layers: [
-          {
-            label: "Core System — vendor",
-            caption: "Sumber kebenaran data transaksi",
-            tone: "core",
-            items: ["Odoo Enterprise 17 (Garudea)"],
-          },
-          {
-            label: "Integration Layer — Tim ICT",
-            caption: "Penghubung dua instance dan pintu data keluar",
-            tone: "external",
-            items: [
-              "Odoo RPC bawaan",
-              "Service penjembatan Golang",
-              "Sync Data System",
-            ],
-          },
-          {
-            label: "Odoo Community 17 — Tim ICT",
-            caption: "15 modul pelengkap",
-            tone: "satellite",
-            items: [
-              "Cash Advance & Settlement",
-              "Reimbursement",
-              "Asset Management",
-              "ESPP & ERAB",
-              "Project & Material Control",
-              "Recruitment, Training, Exit Clearances",
-              "ICT Helpdesk",
-              "Dashboard",
-            ],
-          },
-          {
-            label: "Aplikasi Pendukung — Tim ICT",
-            caption: "Di luar Odoo, sebagian terhubung ke core",
-            tone: "satellite",
-            items: [
-              "AdyaPro — React Native",
-              "AdyaMitra — Next.js + Golang",
-              "AdyaReport — Next.js + Golang",
-              "Adyaworx — Next.js + Golang",
-              "Hallo ATE — chatbot",
-              "ATE Career — job portal",
-            ],
-          },
-        ],
-      },
-      {
-        kind: "impact",
-        heading: "Business / Operational Impact",
+        kind: "points",
         items: [
-          { label: "Cost", text: "Biaya CR vendor dapat dihindari" },
-          { label: "Kecepatan", text: "Kebutuhan baru tak menunggu antrean vendor" },
-          { label: "Cakupan", text: "15 modul dan 9 aplikasi berjalan" },
-          { label: "Kemandirian", text: "Stack dikuasai dan dirawat tim internal" },
+          {
+            lead: "Menangani rantai penuh",
+            text: "Dari analisis kebutuhan, frontend, backend, database, hingga deployment — tanpa bergantung vendor luar",
+          },
+          {
+            lead: "Latar belakang desain grafis",
+            text: "Terbiasa memperhatikan UI/UX, sehingga sistem internal tetap nyaman dipakai orang non-teknis",
+          },
         ],
       },
     ],
@@ -370,58 +314,52 @@ export const slides: Slide[] = [
   {
     id: "slide-6",
     variant: "content",
-    eyebrow: "4 — Software Development / Implementation",
-    title: "Proses Development & Standar Kerja",
+    eyebrow: "Cara Kerja",
+    title: "Proses & Jaminan Kualitas",
     blocks: [
       {
         kind: "steps",
         items: [
           {
-            title: "Analisis & Requirement",
+            title: "Analisis",
             detail:
-              "Diskusi dengan divisi user, dibantu PMO dalam pemetaan business process, lalu kesepakatan output",
+              "Bersama divisi user dan PMO untuk pemetaan business process",
           },
           {
-            title: "Design & Prototype",
-            detail:
-              "Rancang data model, alur approval, dan titik integrasi ke Enterprise",
+            title: "Design",
+            detail: "Rancang data model, alur approval, dan titik integrasi",
+          },
+          { title: "Development", detail: "Modul Odoo dan aplikasi pendukung" },
+          {
+            title: "Review & UAT",
+            detail: "Code review, lalu uji bersama user sebelum rilis",
           },
           {
-            title: "Development",
-            detail:
-              "Modul Odoo Community (Python) dan aplikasi pendukung (Golang, Next.js, React Native)",
-          },
-          {
-            title: "Review & Testing",
-            detail:
-              "Code review, lalu uji di staging bersama user sebelum disetujui rilis",
-          },
-          {
-            title: "Deployment & Maintenance",
-            detail:
-              "Rilis bertahap per modul via Docker, dilanjutkan monitoring pasca-rilis",
+            title: "Deploy & Rawat",
+            detail: "Rilis bertahap via Docker, lalu monitoring",
           },
         ],
       },
       {
-        kind: "points",
-        heading: "Standar yang diterapkan",
-        items: [
+        kind: "columns",
+        columns: [
           {
-            lead: "Version control",
-            text: "Git dengan branch per fitur dan commit terstruktur",
+            title: "Jaminan Kualitas",
+            items: [
+              "User Acceptance Test bersama divisi sebelum go-live",
+              "Rekonsiliasi data Community terhadap sumbernya di Enterprise",
+              "Regression test setiap Enterprise berubah dari sisi vendor",
+              "Dokumentasi teknis dan panduan user tiap modul rilis",
+            ],
           },
           {
-            lead: "Environment terpisah",
-            text: "Development → staging → production, tidak pernah uji langsung di production",
-          },
-          {
-            lead: "Rilis per modul",
-            text: "Satu modul selesai dan dipakai user sebelum masuk modul berikutnya",
-          },
-          {
-            lead: "Dokumentasi",
-            text: "Dokumentasi teknis dan panduan user disiapkan tim ICT bersama PMO setiap modul rilis",
+            title: "Monitoring & SLA",
+            items: [
+              "Harian — cek error log dan status sinkronisasi",
+              "Mingguan — review tiket bersama Dept Head ICT dan Direktur Operasional",
+              "Bug kritikal ditutup < 24 jam, mayor < 3 hari",
+              "Kasus berulang diangkat jadi perbaikan permanen",
+            ],
           },
         ],
       },
@@ -431,40 +369,56 @@ export const slides: Slide[] = [
   {
     id: "slide-7",
     variant: "content",
-    eyebrow: "5 — Testing & Quality Assurance",
-    title: "Metode Testing & Mekanisme Monitoring",
+    eyebrow: "Rencana ke Depan",
+    title: "Yang Sedang & Akan Dikerjakan",
     blocks: [
       {
-        kind: "columns",
-        columns: [
+        kind: "roadmap",
+        items: [
           {
-            title: "Testing Method",
-            items: [
-              "Unit & functional test pada logic kritikal, terutama perhitungan anggaran dan approval",
-              "User Acceptance Test bersama divisi sebelum go-live tiap modul",
-              "Uji integrasi: verifikasi data hasil sinkronisasi Community terhadap sumbernya di Enterprise",
-              "Regression test setiap ada perubahan pada Odoo Enterprise dari vendor",
-            ],
+            title: "HRIS — Sistem Informasi SDM",
+            status: "Prioritas berikutnya",
+            tone: "active",
+            detail:
+              "Absensi mobile (React Native), pengelolaan data karyawan, payroll, dan kontrak — digabung ke Odoo Community. Pengembangannya dialihkan dari vendor ke tim internal, dan segera dikerjakan.",
           },
           {
-            title: "Mekanisme Monitoring",
-            items: [
-              "Harian — cek error log dan status job sinkronisasi",
-              "Mingguan — review tiket ICT Helpdesk bersama Dept Head ICT dan Direktur Operasional; divisi dilibatkan bila ada issue spesifik",
-              "Bulanan — evaluasi performa sistem dan backlog improvement",
-              "Eskalasi — user → developer → manajemen ICT; ke vendor bila akar masalah ada di Enterprise",
-            ],
+            title: "HR Training",
+            status: "Review & revisi",
+            tone: "done",
+            detail:
+              "Manajemen training karyawan hingga pengelolaan sertifikat. Pengembangan selesai, sedang dalam tahap review.",
+          },
+          {
+            title: "Material Control Asset External",
+            status: "Antrean tim ICT",
+            tone: "queued",
+            detail:
+              "Modul yang dinantikan divisi, sudah masuk pipeline pengembangan tim.",
           },
         ],
       },
       {
-        kind: "stats",
-        heading: "KPI utama project",
-        items: [
-          { value: "100%", label: "Data sinkron sesuai sumber Enterprise" },
-          { value: "< 24 jam", label: "Penutupan bug kritikal" },
-          { value: "≥ 99%", label: "Uptime sistem" },
-          { value: "0", label: "Gangguan pada Enterprise akibat Community" },
+        kind: "columns",
+        columns: [
+          {
+            title: "Peluang Teknologi",
+            items: [
+              "Observability: Sentry di React Native, OpenTelemetry di service Golang dan Next.js",
+              "CI/CD agar proses deployment lebih cepat dan konsisten",
+              "AI: kembangkan Hallo ATE jadi asisten pencarian data internal",
+              "Dashboard analitik lintas data Enterprise dan Community",
+            ],
+          },
+          {
+            title: "Arah Jangka Panjang",
+            items: [
+              "Perluas cakupan Community ke proses yang masih berjalan manual",
+              "Kurangi ketergantungan pada vendor untuk kebutuhan baru",
+              "Perluas self-service mitra agar request manual ke ICT berkurang",
+              "Siap membimbing developer baru seiring tim bertambah",
+            ],
+          },
         ],
       },
     ],
@@ -472,126 +426,14 @@ export const slides: Slide[] = [
 
   {
     id: "slide-8",
-    variant: "content",
-    eyebrow: "5 — Problem Solving & Troubleshooting",
-    title: "Penanganan Issue di Production",
-    blocks: [
-      {
-        kind: "steps",
-        heading: "Troubleshooting steps",
-        items: [
-          {
-            title: "Kumpulkan bukti",
-            detail:
-              "Reproduksi masalah, ambil error log, screenshot, dan langkah yang dilakukan user",
-          },
-          {
-            title: "Isolasi layer",
-            detail:
-              "Tentukan sumbernya: UI, service Golang, modul Community, atau data dari Enterprise",
-          },
-          {
-            title: "Analisis root cause",
-            detail: "Cari penyebab dasar, bukan sekadar menutup gejalanya",
-          },
-          {
-            title: "Perbaiki & verifikasi",
-            detail: "Perbaikan diuji di staging, baru dirilis ke production",
-          },
-          {
-            title: "Dokumentasi & komunikasi",
-            detail:
-              "Catat penyelesaian, informasikan ke user, teruskan ke vendor bila akarnya di Enterprise",
-          },
-        ],
-      },
-      {
-        kind: "compare",
-        columns: [
-          {
-            title: "Corrective Action",
-            tone: "before",
-            items: [
-              "Sinkronisasi ulang data yang tidak sesuai setelah perubahan di Enterprise",
-              "Perbaikan query dan indexing pada laporan yang melambat seiring bertambahnya data",
-              "Hotfix dirilis terpisah dari rilis fitur terjadwal",
-            ],
-          },
-          {
-            title: "Preventive Action",
-            tone: "after",
-            items: [
-              "Validasi hasil sinkronisasi terjadwal, tidak menunggu laporan user",
-              "Pengecekan integrasi setiap ada perubahan Enterprise dari vendor",
-              "Kasus berulang diangkat jadi perbaikan permanen, bukan hotfix berulang",
-            ],
-          },
-        ],
-      },
-      {
-        kind: "stats",
-        heading: "Resolution time — target SLA",
-        items: [
-          { value: "< 24 jam", label: "Kritikal — operasional berhenti" },
-          { value: "< 3 hari", label: "Mayor — masih ada workaround" },
-          { value: "Terjadwal", label: "Minor — masuk rilis berikutnya" },
-        ],
-      },
-    ],
-  },
-
-  {
-    id: "slide-9",
-    variant: "content",
-    eyebrow: "6 — Future Development",
-    title: "Rencana Pengembangan Berikutnya",
-    blocks: [
-      {
-        kind: "columns",
-        columns: [
-          {
-            title: "Future Improvement",
-            items: [
-              "Perluas modul Community ke proses divisi yang masih berjalan manual",
-              "Perkuat dashboard analitik lintas data Enterprise dan Community",
-              "Perluas self-service mitra agar request manual ke ICT berkurang",
-              "Standarisasi CI/CD supaya rilis lebih cepat dan konsisten",
-            ],
-          },
-          {
-            title: "Technology Opportunity",
-            items: [
-              "AI: kembangkan Hallo ATE menjadi asisten pencarian data internal",
-              "Golang untuk service bervolume tinggi yang dipisah dari Odoo",
-              "Observability terpusat: log dan metrik sinkronisasi dalam satu dashboard",
-              "Mobile-first (React Native) untuk proses yang berjalan di lapangan",
-            ],
-          },
-        ],
-      },
-      {
-        kind: "points",
-        emphasized: true,
-        items: [
-          {
-            lead: "Arah jangka panjang",
-            text: "Odoo Community tetap jadi jalur cepat untuk kebutuhan yang tidak tercakup vendor, dengan integrasi ke Enterprise yang dijaga tetap aman dan terukur",
-          },
-        ],
-      },
-    ],
-  },
-
-  {
-    id: "slide-10",
     variant: "closing",
     title: "Terima Kasih",
     content:
-      "Terbuka untuk pertanyaan dan diskusi lebih dalam mengenai project ini.",
+      "Siap memberikan kontribusi yang lebih besar bersama PT Adyawinsa Telecommunication and Electrical.",
     presenter: {
       name: "Muhammad Yos Sularko",
       role: "IT System Development — Tim ICT",
-      meta: ["PT Adyawinsa Telecommunication and Electrical"],
+      meta: ["Terbuka untuk pertanyaan dan diskusi"],
     },
   },
 ];
